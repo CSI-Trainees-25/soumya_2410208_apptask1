@@ -1,38 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:up_todo/main.dart';
 import 'homescreen.dart';
+import 'package:up_todo/main.dart';
 
-class login_screen extends StatefulWidget {
-  const login_screen({super.key});
+class CreateAccScreen extends StatefulWidget {
+  const CreateAccScreen({super.key});
 
   @override
-  State<login_screen> createState() => _login_screenState();
+  State<CreateAccScreen> createState() => _CreateAccScreenState();
 }
 
-class _login_screenState extends State<login_screen> {
-  final _formkey = GlobalKey<FormState>;
+class _CreateAccScreenState extends State<CreateAccScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black26,
       appBar: AppBar(
         title: Text(
-          'LOGIN',
-
+          'CREATE ACCOUNT',
           style: TextStyle(
             color: const Color.fromARGB(255, 227, 218, 218),
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
+            fontWeight: FontWeight.w500,
           ),
         ),
-        centerTitle: true,
       ),
       body: Center(
         child: Form(
           child: Column(
             children: [
+              TextFormField(
+                controller: _usernameController,
+                keyboardType: TextInputType.name,
+                decoration: InputDecoration(
+                  labelText: "Username",
+                  hintText: "student1",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(2 as Radius),
+                  ),
+                ),
+              ),
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -65,29 +73,7 @@ class _login_screenState extends State<login_screen> {
                   backgroundColor: const Color.fromARGB(255, 109, 73, 172),
                   foregroundColor: const Color.fromARGB(26, 234, 227, 227),
                 ),
-                child: Text('Login'),
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Don't have an account?",
-                    style: TextStyle(color: Colors.white70),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/createacc');
-                    },
-                    child: const Text(
-                      "Sign up",
-                      style: TextStyle(
-                        color: Colors.deepPurpleAccent,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
+                child: Text('Create Account'),
               ),
             ],
           ),
