@@ -4,13 +4,20 @@ import 'Screen/splashscreen.dart';
 import 'Screen/contactscreen.dart';
 import 'Screen/homescreen.dart';
 import 'Screen/loginscreen.dart';
+import 'Screen/createaccountscreen.dart';
 
 void main() {
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: 'Splash',
-      routes: {'Splash': (context) => SplashScreen()},
+      home: SplashScreen(),
+      routes: {
+        '/Splash': (context) => SplashScreen(),
+        '/login': (context) => login_screen(),
+        '/contact': (context) => ContactScreen(),
+        '/createacc': (context) => CreateAccScreen(),
+        '/home': (context) => HomeScreen(),
+      },
     ),
   );
 }
