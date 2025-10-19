@@ -10,6 +10,7 @@ class CreateAccScreen extends StatefulWidget {
 }
 
 class _CreateAccScreenState extends State<CreateAccScreen> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
@@ -81,6 +82,15 @@ class _CreateAccScreenState extends State<CreateAccScreen> {
 
                 TextFormField(
                   controller: _emailController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Please enter your Email";
+                    } else if (!RegExp(
+                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                    ).hasMatch(value)) {
+                      return "Please enter a valid Email";
+                    }
+                  },
                   keyboardType: TextInputType.emailAddress,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
@@ -110,6 +120,15 @@ class _CreateAccScreenState extends State<CreateAccScreen> {
 
                 TextFormField(
                   controller: _passwordController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Enter a password";
+                    } else if (value.length >= 6) {
+                      return null;
+                    } else {
+                      return "password must be at least 6 characters";
+                    }
+                  },
                   obscureText: true,
                   keyboardType: TextInputType.visiblePassword,
                   style: const TextStyle(color: Colors.white),
@@ -140,7 +159,9 @@ class _CreateAccScreenState extends State<CreateAccScreen> {
 
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/home');
+                    if (_formKey.currentState?.validate() ?? false) {
+                      Navigator.pushReplacementNamed(context, '/home');
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 109, 73, 172),

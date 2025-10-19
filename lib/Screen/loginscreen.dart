@@ -61,6 +61,15 @@ class _login_screenState extends State<login_screen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
+                validator: (value) {
+                  if (value == null) {
+                    return "Please enter your Email";
+                  } else if (!RegExp(
+                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                  ).hasMatch(value)) {
+                    return "Please enter a valid Email";
+                  }
+                },
               ),
 
               const SizedBox(height: 20),
@@ -68,6 +77,15 @@ class _login_screenState extends State<login_screen> {
               TextFormField(
                 controller: _passwordController,
                 obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Enter a password";
+                  } else if (value.length >= 6) {
+                    return null;
+                  } else {
+                    return "password must be at least 6 characters";
+                  }
+                },
                 style: const TextStyle(color: Colors.white),
                 keyboardType: TextInputType.visiblePassword,
                 decoration: InputDecoration(
@@ -91,12 +109,13 @@ class _login_screenState extends State<login_screen> {
 
               const SizedBox(height: 30),
 
-              // 🟣 Login Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/home');
+                    if (_formKey.currentState?.validate() ?? false) {
+                      Navigator.pushReplacementNamed(context, '/home');
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 109, 73, 172),
@@ -121,7 +140,6 @@ class _login_screenState extends State<login_screen> {
 
               const SizedBox(height: 35),
 
-              // 🟣 OR Divider
               Row(
                 children: const [
                   Expanded(
