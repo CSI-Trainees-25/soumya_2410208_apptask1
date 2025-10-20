@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'homescreen.dart';
 import 'package:up_todo/main.dart';
+import 'loginscreen.dart';
 
 class CreateAccScreen extends StatefulWidget {
   const CreateAccScreen({super.key});
@@ -159,9 +160,12 @@ class _CreateAccScreenState extends State<CreateAccScreen> {
 
                 ElevatedButton(
                   onPressed: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      Navigator.pushReplacementNamed(context, '/home');
-                    }
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HomeScreen(),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 109, 73, 172),
@@ -185,7 +189,12 @@ class _CreateAccScreenState extends State<CreateAccScreen> {
                 const SizedBox(height: 25),
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const login_screen(),
+                      ),
+                    );
                   },
                   child: const Text(
                     'Already have an account? Log in',

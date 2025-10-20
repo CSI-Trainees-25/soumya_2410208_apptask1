@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'taskscreen.dart';
+// import 'taskscreen.dart';
 
 class Task {
   String title;
   String category;
   bool isDone;
+  String description;
 
-  Task({required this.title, this.category = 'General', this.isDone = false});
+  Task({
+    required this.title,
+    this.category = 'General',
+    this.isDone = false,
+    required this.description,
+  });
 }
 
 class HomeScreen extends StatefulWidget {
@@ -21,9 +27,11 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final List<String> _categories = ['General', 'Work', 'Personal', 'Shopping'];
+  List<Task> tasks = [];
   @override
   void dispose() {
     _titleController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
@@ -53,39 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         centerTitle: true,
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 200),
-              Center(
-                child: Container(
-                  width: 150,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/images/Checklist-rafiki 1.jpg"),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                child: Text(
-                  "Tap + to add your tasks",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w200,
-                    color: Colors.white,
-
-                    fontSize: 20,
-                    letterSpacing: 0.75,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      body: SafeArea(child: buildbody()),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.deepPurpleAccent,
         onPressed: _showAddTaskSheet,
@@ -107,8 +83,99 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget buildbody() {
+    if (tasks.isEmpty) {
+      return SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: 200),
+            Center(
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/Checklist-rafiki 1.jpg"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              child: Text(
+                "Tap + to add your tasks",
+                style: TextStyle(
+                  fontWeight: FontWeight.w200,
+                  color: Colors.white,
+                  fontSize: 20,
+                  letterSpacing: 0.75,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return ListView.builder(
+      itemCount: tasks.length,
+      itemBuilder: (context, index) {
+        final task = tasks[index];
+        return Card(
+          color: Colors.grey[850],
+          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.deepPurpleAccent.withOpacity(0.3),
+              child: Text(
+                task.category[0],
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            title: Text(
+              task.title,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                decoration: task.isDone
+                    ? TextDecoration.lineThrough
+                    : TextDecoration.none,
+                decorationColor: Colors.white,
+              ),
+            ),
+            subtitle: Text(
+              task.description,
+              style: TextStyle(
+                color: Colors.white70,
+                decoration: task.isDone
+                    ? TextDecoration.lineThrough
+                    : TextDecoration.none,
+                decorationColor: Colors.white70,
+              ),
+            ),
+
+            trailing: Checkbox(
+              value: task.isDone,
+              onChanged: (bool? newValue) {
+                setState(() {
+                  task.isDone = newValue!;
+                });
+              },
+              activeColor: Colors.deepPurpleAccent,
+              checkColor: Colors.white,
+              side: const BorderSide(color: Colors.white54),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void _showAddTaskSheet() {
     _titleController.clear();
+    _descriptionController.clear();
 
     String _selectedCategory = _categories.first;
 
@@ -165,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(height: 16),
 
                     DropdownButtonFormField<String>(
-                      value: _selectedCategory,
+                      initialValue: _selectedCategory,
                       dropdownColor: Colors.grey[800],
                       style: const TextStyle(color: Colors.white),
                       decoration: const InputDecoration(
@@ -192,17 +259,30 @@ class _HomeScreenState extends State<HomeScreen> {
                     ElevatedButton(
                       onPressed: () {
                         final String title = _titleController.text;
+                        final String description = _descriptionController.text;
                         if (title.isNotEmpty) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => TaskScreen(),
-                            ),
+                          final newTask = Task(
+                            title: title,
+                            description: description,
+                            category: _selectedCategory,
                           );
-                          //  Navigator.pop(context);
+                          setState(() {
+                            tasks.add(newTask);
+                          });
+                          Navigator.pop(context);
                         }
                       },
-                      child: const Text('Add Task'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepPurpleAccent,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'Add Task',
+                        style: TextStyle(color: Colors.white70),
+                      ),
                     ),
                   ],
                 ),
