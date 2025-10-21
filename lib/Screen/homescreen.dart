@@ -156,16 +156,36 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-            trailing: Checkbox(
-              value: task.isDone,
-              onChanged: (bool? newValue) {
-                setState(() {
-                  task.isDone = newValue!;
-                });
-              },
-              activeColor: Colors.deepPurpleAccent,
-              checkColor: Colors.white,
-              side: const BorderSide(color: Colors.white54),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Checkbox(
+                  value: task.isDone,
+                  onChanged: (bool? newValue) {
+                    setState(() {
+                      task.isDone = newValue!;
+                    });
+                  },
+                  activeColor: Colors.deepPurpleAccent,
+                  checkColor: Colors.white,
+                  side: const BorderSide(color: Colors.white54),
+                ),
+                if (task.isDone)
+                  IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.redAccent),
+                    onPressed: () {
+                      setState(() {
+                        tasks.removeAt(index);
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Task deleted'),
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
+                    },
+                  ),
+              ],
             ),
           ),
         );
