@@ -38,6 +38,7 @@ class _CreateAccScreenState extends State<CreateAccScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
           child: Form(
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -54,6 +55,11 @@ class _CreateAccScreenState extends State<CreateAccScreen> {
 
                 TextFormField(
                   controller: _usernameController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Please enter your Username";
+                    }
+                  },
                   keyboardType: TextInputType.name,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
@@ -160,12 +166,14 @@ class _CreateAccScreenState extends State<CreateAccScreen> {
 
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HomeScreen(),
-                      ),
-                    );
+                    if (_formKey.currentState!.validate()) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomeScreen(),
+                        ),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 109, 73, 172),
