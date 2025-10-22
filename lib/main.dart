@@ -4,7 +4,7 @@ import 'Screen/splashscreen.dart';
 import 'Screen/contactscreen.dart';
 import 'Screen/homescreen.dart';
 import 'Screen/loginscreen.dart';
-import 'Screen/createaccountscreen.dart';
+import 'Screen/CreateAcc.dart';
 
 void main() {
   runApp(
