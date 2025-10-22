@@ -29,6 +29,8 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   animated_bottom_navigation_bar: ^1.4.0
+  table_calendar: ^3.2.0
+  intl: ^0.20.2
   flutter:
     sdk: flutter
 

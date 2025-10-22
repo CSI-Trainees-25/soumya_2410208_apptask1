@@ -100,95 +100,136 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            SizedBox(
-              child: Text(
-                "Tap + to add your tasks",
-                style: TextStyle(
-                  fontWeight: FontWeight.w200,
-                  color: Colors.white,
-                  fontSize: 20,
-                  letterSpacing: 0.75,
-                ),
+            const SizedBox(height: 10),
+            const Text(
+              "Tap + to add your tasks",
+              style: TextStyle(
+                fontWeight: FontWeight.w200,
+                color: Colors.white,
+                fontSize: 20,
+                letterSpacing: 0.75,
               ),
             ),
           ],
         ),
       );
     }
-    return ListView.builder(
-      itemCount: tasks.length,
-      itemBuilder: (context, index) {
-        final task = tasks[index];
-        return Card(
-          color: Colors.grey[850],
-          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor: Colors.deepPurpleAccent.withOpacity(0.3),
-              child: Text(
-                task.category[0],
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            title: Text(
-              task.title,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                decoration: task.isDone
-                    ? TextDecoration.lineThrough
-                    : TextDecoration.none,
-                decorationColor: Colors.white,
-              ),
-            ),
-            subtitle: Text(
-              task.description,
-              style: TextStyle(
-                color: Colors.white70,
-                decoration: task.isDone
-                    ? TextDecoration.lineThrough
-                    : TextDecoration.none,
-                decorationColor: Colors.white70,
-              ),
-            ),
 
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
+    // Group tasks by category
+    Map<String, List<Task>> groupedTasks = {};
+    for (var category in _categories) {
+      groupedTasks[category] = tasks
+          .where((task) => task.category == category)
+          .toList();
+    }
+
+    // Display each category as a card
+    return ListView(
+      children: groupedTasks.entries.map((entry) {
+        final category = entry.key;
+        final categoryTasks = entry.value;
+
+        // Skip empty categories to keep it clean
+        if (categoryTasks.isEmpty) return SizedBox.shrink();
+
+        return Card(
+          color: Colors.grey[900],
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Checkbox(
-                  value: task.isDone,
-                  onChanged: (bool? newValue) {
-                    setState(() {
-                      task.isDone = newValue!;
-                    });
-                  },
-                  activeColor: Colors.deepPurpleAccent,
-                  checkColor: Colors.white,
-                  side: const BorderSide(color: Colors.white54),
+                // Category Title
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      category,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.deepPurpleAccent,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                    Icon(
+                      Icons.category_rounded,
+                      color: Colors.deepPurpleAccent.withOpacity(0.8),
+                    ),
+                  ],
                 ),
-                if (task.isDone)
-                  IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.redAccent),
-                    onPressed: () {
-                      setState(() {
-                        tasks.removeAt(index);
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Task deleted'),
-                          duration: Duration(seconds: 1),
+                const Divider(color: Colors.white24, thickness: 0.8),
+                const SizedBox(height: 4),
+
+                // Tasks under this category
+                ...categoryTasks.map((task) {
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(
+                      task.title,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        decoration: task.isDone
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none,
+                      ),
+                    ),
+                    subtitle: Text(
+                      task.description,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        decoration: task.isDone
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none,
+                      ),
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Checkbox(
+                          value: task.isDone,
+                          onChanged: (val) {
+                            setState(() {
+                              task.isDone = val!;
+                            });
+                          },
+                          activeColor: Colors.deepPurpleAccent,
+                          checkColor: Colors.white,
+                          side: const BorderSide(color: Colors.white54),
                         ),
-                      );
-                    },
-                  ),
+                        if (task.isDone)
+                          IconButton(
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.redAccent,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                tasks.remove(task);
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Task deleted'),
+                                  duration: Duration(seconds: 1),
+                                ),
+                              );
+                            },
+                          ),
+                      ],
+                    ),
+                  );
+                }).toList(),
               ],
             ),
           ),
         );
-      },
+      }).toList(),
     );
   }
 
