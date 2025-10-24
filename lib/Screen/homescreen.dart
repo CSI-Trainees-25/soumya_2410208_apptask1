@@ -252,6 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       color: Colors.white54,
                                     ),
                                   ),
+
                                   if (task.isDone)
                                     IconButton(
                                       icon: const Icon(
@@ -271,6 +272,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                         );
                                       },
+                                    )
+                                  else
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        color: Colors.white70,
+                                      ),
+                                      onPressed: () {
+                                        _showAddTaskSheet(taskToEdit: task);
+                                      },
                                     ),
                                 ],
                               ),
@@ -289,9 +300,15 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _showAddTaskSheet() {
-    _titleController.clear();
-    _descriptionController.clear();
+  void _showAddTaskSheet({Task? taskToEdit}) {
+    final bool isEditing = taskToEdit != null;
+    if (isEditing) {
+      _titleController.text = taskToEdit.title;
+      _descriptionController.text = taskToEdit.description;
+    } else {
+      _titleController.clear();
+      _descriptionController.clear();
+    }
 
     String _selectedCategory = _categories.first;
     DateTime? _selectedDate;
