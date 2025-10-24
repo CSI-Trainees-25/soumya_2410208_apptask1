@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:intl/intl.dart';
 import 'CalendarScreen.dart';
-
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Task {
@@ -19,6 +19,25 @@ class Task {
     required this.description,
     required this.date,
   });
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'category': category,
+      'isDone': isDone,
+      'description': description,
+      'date': date.toIso8601String(),
+    };
+  }
+
+  factory Task.fromJson(Map<String, dynamic> json) {
+    return Task(
+      title: json['title'],
+      category: json['category'],
+      isDone: json['isDone'],
+      description: json['description'],
+      date: DateTime.parse(json['date']),
+    );
+  }
 }
 
 class HomeScreen extends StatefulWidget {
@@ -33,6 +52,12 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _titleController = TextEditingController();
   final List<String> _categories = ['General', 'Work', 'Personal', 'Shopping'];
   List<Task> tasks = [];
+  @override
+  void initState() {
+    super.initState();
+    _loadTasks();
+  }
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -263,6 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         setState(() {
                                           tasks.remove(task);
                                         });
+                                        _saveTasks();
                                         ScaffoldMessenger.of(
                                           context,
                                         ).showSnackBar(
@@ -447,6 +473,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         setState(() {
                           tasks.add(newTask);
                         });
+                        _saveTasks();
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
@@ -474,7 +501,26 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _savedata() async {
+  void _loadTasks() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final List<String>? taskStrings = prefs.getStringList('tasks');
+    if (taskStrings != null) {
+      setState(() {
+        tasks = taskStrings.map((taskString) {
+          Map<String, dynamic> taskMap = jsonDecode(taskString);
+
+          return Task.fromJson(taskMap);
+        }).toList();
+      });
+    }
+  }
+
+  void _saveTasks() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    List<String> taskStrings = tasks
+        .map((task) => jsonEncode(task.toJson()))
+        .toList();
+    await prefs.setStringList('tasks', taskStrings);
   }
 }
