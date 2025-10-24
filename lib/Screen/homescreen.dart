@@ -3,6 +3,8 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:intl/intl.dart';
 import 'CalendarScreen.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class Task {
   String title;
   String category;
@@ -453,5 +455,9 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  void _savedata() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
   }
 }
